@@ -1,10 +1,12 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WebServer.h>
+
 const int LED_ON_DURATION = 5000;
 #ifndef LED_BUILTIN
 #define LED_BUILTIN 2
 #endif
+const int relay = 26;
 
 const char *SSID = "ingenieria";
 const char *PASSWORD = "iping2024";
@@ -23,6 +25,8 @@ void setup()
   Serial.begin(115200);
   // pinMode(buzzerPin, OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(relay, OUTPUT);
+
   digitalWrite(LED_BUILTIN, LOW);
   delay(5000);
   digitalWrite(LED_BUILTIN, HIGH);
@@ -51,12 +55,14 @@ void handleTrigger() {
   
   digitalWrite(LED_BUILTIN, HIGH);
   Serial.println("LED turned on");
+  digitalWrite(relay, HIGH);
   
   server.send(200, "text/plain", "LED triggered");
   
   delay(LED_ON_DURATION);
   digitalWrite(LED_BUILTIN, LOW);
   Serial.println("LED turned off");
+  digitalWrite(relay, LOW);
 }
 
 void connectToWiFi() {
