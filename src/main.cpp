@@ -2,11 +2,14 @@
 #include <WiFi.h>
 #include <WebServer.h>
 
-const int LED_ON_DURATION = 5000;
+const int LED_ON_DURATION = 3000; //30*1000
 #ifndef LED_BUILTIN
 #define LED_BUILTIN 2
 #endif
 const int relay = 26;
+static bool relayStatus = HIGH; //init depends on module
+unsigned long triggerStartTime = 0;
+bool alarmActive = false;
 
 const char *SSID = "ingenieria";
 const char *PASSWORD = "iping2024";
@@ -16,6 +19,7 @@ const char* AUTH_PASS = "secret";
 WebServer server(80);
 
 // DECLARATIONS
+void switchRelay();
 void connectToWiFi();
 void handleTrigger();
 void setupOTA();
@@ -26,10 +30,7 @@ void setup()
   // pinMode(buzzerPin, OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(relay, OUTPUT);
-
-  digitalWrite(LED_BUILTIN, LOW);
-  delay(5000);
-  digitalWrite(LED_BUILTIN, HIGH);
+  digitalWrite(relay, relayStatus); 
 
   connectToWiFi();
   //void setupOTA();
@@ -42,6 +43,9 @@ void setup()
 
 void loop()
 {
+  if (WiFi.status() != WL_CONNECTED) {
+    connectToWiFi();
+  }
   server.handleClient();
   //ArduinoOTA.handle();
 }
@@ -55,14 +59,21 @@ void handleTrigger() {
   
   digitalWrite(LED_BUILTIN, HIGH);
   Serial.println("LED turned on");
-  digitalWrite(relay, HIGH);
+  switchRelay();
+  digitalWrite(relay, relayStatus); 
   
   server.send(200, "text/plain", "LED triggered");
-  
   delay(LED_ON_DURATION);
+  
   digitalWrite(LED_BUILTIN, LOW);
   Serial.println("LED turned off");
-  digitalWrite(relay, LOW);
+  switchRelay();
+  digitalWrite(relay, relayStatus); 
+}
+
+
+void switchRelay(){
+  relayStatus = !relayStatus;
 }
 
 void connectToWiFi() {
@@ -86,7 +97,7 @@ void connectToWiFi() {
   }
 }
 
-
+// OTA
 /*
 void setupOTA() {
   ArduinoOTA.setHostname("esp32-doorbell");
@@ -103,7 +114,6 @@ void setupOTA() {
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
     Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
   });
-  
   
   ArduinoOTA.onError([](ota_error_t error) {
     Serial.printf("Error[%u]: ", error);
