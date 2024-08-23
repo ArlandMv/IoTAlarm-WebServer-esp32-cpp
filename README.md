@@ -9,6 +9,7 @@
 - [Requisitos de Hardware](#requisitos-de-hardware)
 - [Requisitos de Software](#requisitos-de-software)
 - [Instalación](#instalación)
+- [Configuración smtp.gmail.com](#configuracion-smtp.gmail.com)
 - [Uso](#uso)
 - [Endpoints de la API](#puntos-finales-de-la-api)
 - [Nota de Seguridad](#nota-de-seguridad)
@@ -31,6 +32,7 @@ El código proporcionado es un ejemplo funcional y educativo. Para aquellos inte
 - Control de relé para activar una alarma de 12V
 - Control del LED incorporado como indicador visual
 - Manejo de errores para la conexión WiFi
+- Notificaciones via email smtp.
 
 ## 🛠️Componentes del Sistema
 - Microcontrolador ESP32(y su fuente 5v)
@@ -73,6 +75,11 @@ El código proporcionado es un ejemplo funcional y educativo. Para aquellos inte
    const char *PASSWORD = "su_contraseña_wifi";
    ```
 7. Suba el código a su placa ESP32.
+
+## Configuración smtp.gmail.com
+- Abrir cuenta google https://myaccount.google.com/
+- Activar google 2 factor auth en la pestaña de seguridad.
+- Obtener contraseña de applicacion "IoT-Alarm" en http://myaccount.google.com/apppasswords 
 
 ## 🚀Uso
 1. Encienda su placa ESP32 y la fuente de alimentación de la alarma.
